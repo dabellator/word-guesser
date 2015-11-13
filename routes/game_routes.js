@@ -1,6 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-// var Word = require(__dirname + '/../models/word');
+var Word = require(__dirname + '/../models/wordSchema');
 var handleErr = require(__dirname + '/../lib/handle-err');
 var GameData = require(__dirname + '/../lib/game-data');
 var game = require(__dirname + '/../lib/game');
