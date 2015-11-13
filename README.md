@@ -1,6 +1,7 @@
 # word-guesser
-a simple game to guess a random word
-Added 7 files:
+a simple game to guess a random word.
+
+#Added 7 files:
 module.js, process.js, random_word.js, wordCollection.js, wordSchema.js, importFile.js, data.txt
 1. Finally all is working:)
 It is possible to download any text file with words and DB builds automaticly.
