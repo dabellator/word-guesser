@@ -138,6 +138,7 @@
 			$("#newgame").click(function() {
 	      $.ajax({url: "new", success: function(result) {
 	      	$.ajax({url: gameID(result) +'/asdf', success: function(result) {
+	      		$('#guess').html('guess');
 			      $("#newgame").html(result.letters + ' letter word');
 			     	$("input").attr("maxlength", result.letters);
 			      displayFeedback(result.letters, 0, 0);
@@ -160,6 +161,7 @@
 					$('#feedback').append('<td class="won"></td>');
 				}
 				$("#newgame").html('make new game');
+				$("#guess").html('you won!');
 			}
 
 			function displayFeedback(letters, full, half) {
