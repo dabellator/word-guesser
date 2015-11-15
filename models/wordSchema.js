@@ -4,7 +4,8 @@ var random = require('mongoose-random');
 var wordsSchema = new mongoose.Schema({
 	word: String,
 	guessed: Number,
-	time: Number
+	time_avg: Number,
+	amountOfGuesses: Number
 });
 wordsSchema.plugin(random, { path: 'r' })
 
