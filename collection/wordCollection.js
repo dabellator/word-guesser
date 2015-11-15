@@ -14,12 +14,11 @@ db.once('open', function (callback) {
 // Get collection of words
 var WordNew = require(__dirname + '/../models/wordSchema');
 
-
 module.exports = exports = function buildDB (allwords) {	
 	var word_data;
 	var savedCount = 0;
 	for (var i = 0; i < allwords.length; i++) {
-		var word_data = new WordNew({word: allwords[i]});
+		var word_data = new WordNew({word: allwords[i], guessed: 0, time_avg: 0, amountOfGuesses: 0});
 		word_data.save(function (err, word_data) {
 			if (err) return console.log(err);
 			savedCount++;
@@ -29,7 +28,6 @@ module.exports = exports = function buildDB (allwords) {
 		});
 	};
 };
-
 
 //module.exports = exports = buildDB;
 module.exports.word = exports =  WordNew;
