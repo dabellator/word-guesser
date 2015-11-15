@@ -17,7 +17,7 @@
 			figure, figcaption, footer, header, hgroup, 
 			menu, nav, output, ruby, section, summary,
 			time, mark, audio, video {
-				margin: 0;
+				margin: 0;half
 				padding: 0;
 				border: 0;
 				font-size: 100%;
@@ -39,15 +39,19 @@
 				font-size: 2.65em;
 				text-align: center;
 				letter-spacing: 6px;
-				color: #e60000;
+				color: #cc0000;
 
 				height: 54px;
-				width: 400px;
+				width: 27%;
 				border: 1px solid black;
 				border-radius: 3px;
 			}
 
 			td {
+				font-size: 2.55em;
+				color: white;
+				vertical-align: middle;
+
 				background-color: white;
 				height: 50px;
 				width: 50px;
@@ -56,15 +60,15 @@
 			}
 
 			.full {
-				background-color: #e60000;
+				background-color: #248f24;
 			}
 
 			.half {
-				background-color: #ff9999;
+				background-color: #e6b700;
 			}
 
-			.won {
-				background-color: #00cc00;
+			.none {
+				background-color: #cc0000;
 			}
 
 			.container {
@@ -101,7 +105,7 @@
 			}
 
 			#guess {
-				width: 21.5%;
+				width: 23%;
 			}
 
 			#guessform{
@@ -113,12 +117,12 @@
 	<body>
 
 		<div class="container">
-			<div id="title">wor<span style="color:#e60000">db</span>reaker</div>
+			<div id="title">wor<span style="color:#cc0000">db</span>reaker</div>
 			<div id="newgame"> make new game </div>
 			<form id="guessform">
-					<input type="text" maxlength="8" value="">
+				<input type="text" maxlength="8" value="">
 			</form> 
-			<div id="guess"> guess </div>
+			<div id="guess" onclick="guess()"> guess </div>
 			<table id="feedback"></table>
 		</div>
 
@@ -127,54 +131,66 @@
 			var gameID = function(set) { 
 				var id = set;
 				return function(set){
-					if(set) {
-						return id = set;
-					} else {
-						return id;
-					}
+					if (set) return id = set;
+					else return id;
 				}; 
 			}();
 
+			$(document).ready(function() { //prevents default behavior of hitting enter from a form field, runs guess() instead
+				$(document).on('keypress', 'form input[type="text"]', function(e) {
+				  if(e.keyCode == 13) {
+				    e.preventDefault();
+				    guess();
+				    return false;
+				  }
+				});
+			});
+
 			$("#newgame").click(function() {
+				$("#title").html('wor<span style="color:#cc0000">db</span>reaker')
+	  		$('#guess').html('guess');
 	      $.ajax({url: "new", success: function(result) {
-	      	$.ajax({url: gameID(result) +'/asdf', success: function(result) {
-	      		$('#guess').html('guess');
-			      $("#newgame").html(result.letters + ' letter word');
-			     	$("input").attr("maxlength", result.letters);
-			      displayFeedback(result.letters, 0, 0);
+	      	$.ajax({url: gameID(result) + '/x', success: function(result) {
+			      $("#newgame").html(result.arr.length + ' letter word');
+			     	$("input").attr("maxlength", result.arr.length);
+			      displayEmpties(result.arr.length);
 			  	}});
 		  	}});
 			});
-		
-			$('#guess').click(function () {
+
+			function guess() {
 				var form = document.getElementById('guessform');
 				var input = form.elements[0].value;	
+				form.elements[0].value = "";
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
-					if (result.gameOver) winner(result.letters);
-					else displayFeedback(result.letters, result.full, result.half);
+					if (result.gameOver) winner(result.arr);
+					else displayFeedback(result.arr);
 		  	}});
-			});
-
-			function winner(letters) {
+			}
+		
+			function winner(resArray) {
 				$('#feedback').html('');
-				for (i=0; i<letters; i++) {
-					$('#feedback').append('<td class="won"></td>');
+				for (i=0; i<resArray.length; i++) {
+					$('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
 				}
 				$("#newgame").html('make new game');
 				$("#guess").html('you won!');
+				$("#title").html('wor<span style="color:#248f24">db</span>reaker');
 			}
 
-			function displayFeedback(letters, full, half) {
+			function displayFeedback (resArray) {
 				$('#feedback').html('');
-				var empty = letters - (half + full);
-				for (i=0; i<full; i++) {
-					$('#feedback').append('<td class="full"></td>');
+				for (i=0; i<resArray.length; i++) {
+					if (resArray[i][1] == '2') $('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
+					if (resArray[i][1] == '1') $('#feedback').append('<td class="half">' + resArray[i][0] + '</td>');
+					if (resArray[i][1] == '0') $('#feedback').append('<td class="none">' + resArray[i][0] + '</td>');
 				}
-				for (i=0; i<half; i++) {
-					$('#feedback').append('<td class="half"></td>');
-				}
-				for (i=0; i<empty; i++) {
-					$('#feedback').append('<td class="empty"></td>');
+			}
+
+			function displayEmpties(letters) {
+				$('#feedback').html('');
+				for (i=0; i<letters; i++) {
+					$('#feedback').append('<td> </td>');
 				}
 			}
 
