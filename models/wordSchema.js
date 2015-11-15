@@ -2,10 +2,10 @@ var mongoose = require('mongoose');
 var random = require('mongoose-random');
 
 var wordsSchema = new mongoose.Schema({
-	word: String,
-	guessed: Number,
-	time_avg: Number,
-	amountOfGuesses: Number
+  word: String,
+  guessed: Number,
+  time_avg: Number,
+  amountOfGuesses: Number
 });
 wordsSchema.plugin(random, { path: 'r' })
 
