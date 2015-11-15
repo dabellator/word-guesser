@@ -1,12 +1,14 @@
 var mongoose = require('mongoose');
+var random = require('mongoose-random');
 
 var wordsSchema = new mongoose.Schema({
 	word: String,
 	guessed: Number,
 	time: Number
 });
+wordsSchema.plugin(random, { path: 'r' })
 
-module.exports = mongoose.model('Word', wordsSchema);
-
+var Word = mongoose.model('Word', wordsSchema);
+module.exports = Word;
 
 
