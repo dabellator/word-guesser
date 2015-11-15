@@ -1,5 +1,6 @@
 
 var mongoose = require('mongoose');
+var random = require('mongoose-random');
 
 //Connecting to DB
 
@@ -16,16 +17,23 @@ var WordNew = require(__dirname + '/../models/wordSchema');
 
 module.exports = exports = function buildDB (allwords) {	
 	var word_data;
+	var savedCount = 0;
 	for (var i = 0; i < allwords.length; i++) {
 		var word_data = new WordNew({word: allwords[i]});
 		word_data.save(function (err, word_data) {
 			if (err) return console.log(err);
+			savedCount++;
+			if(savedCount === allwords.length) {
+				db.close();
+			}
 		});
 	};
 };
 
 
-module.exports.word = exports =  WordNew;;
+//module.exports = exports = buildDB;
+module.exports.word = exports =  WordNew;
+
 
 
 //example of easy words, here doesn't matter
