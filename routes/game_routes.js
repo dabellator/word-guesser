@@ -12,24 +12,25 @@ var gameRouter = module.exports = express.Router();
 // launch game instance
 gameRouter.get('/new', function(req, res) {
   // generate random word
-  Word.count(function (err, data) {
-    console.log(data);
-    var total = data;
-    var random = Math.floor(Math.random() * total);
-    Word.find().limit(-1).skip(random).exec(function(err, data) {
-      if (err) return handleErr(err, res);
-      //store gameID: word in object
-      var gameID = gameData.launch(data[0].word);
-      //response includes game number
-      res.send(gameID);
-    });
-  });
+ // Word.count(function (err, data) {
+ //   console.log(data);
+ //   var total = data;
+ //   var random = Math.floor(Math.random() * total);
+ //   Word.find().limit(-1).skip(random).exec(function(err, data) {
+ //     if (err) return handleErr(err, res);
+ //     //store gameID: word in object
+ //     var gameID = gameData.launch(data[0].word);
+ //     //response includes game number
+ //     res.send(gameID);
+ //   });
+ // });
 
-//  Word.random(function(word) {
-//    debugger;
-//    var gameID = gameData.launch(word);
-//    res.send(gameID);
-//  })
+  Word.random(function(err, word) {
+ //   debugger;
+    if (err) throw err;
+    var gameID = gameData.launch(word[0].word);
+    res.send(gameID);
+  })
 });
 
 gameRouter.get('/games', function(req, res) {
