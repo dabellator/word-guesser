@@ -4,7 +4,7 @@ var random = require('mongoose-random');
 
 //Connecting to DB
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/word_game_dev');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
@@ -20,7 +20,7 @@ module.exports = exports = function buildDB (allwords) {
 	for (var i = 0; i < allwords.length; i++) {
 		var word_data = new WordNew({word: allwords[i], guessed: 0, time_avg: 0, amountOfGuesses: 0});
 		word_data.save(function (err, word_data) {
-			if (err) return console.log(err);
+			if (err) throw err;
 			savedCount++;
 			if(savedCount === allwords.length) {
 				db.close();

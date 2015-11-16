@@ -4,22 +4,37 @@ var Word = require(__dirname + '/../models/wordSchema');
 var handleErr = require(__dirname + '/../lib/handle-err');
 var GameData = require(__dirname + '/../lib/game-data');
 var game = require(__dirname + '/../lib/game');
+//var random = require(__dirname + '/../lib/random_word.js');
 
 var gameData = new GameData();
 var gameRouter = module.exports = express.Router();
 
 // launch game instance
 gameRouter.get('/new', function(req, res) {
-  var gameID = gameData.launch('jesus');
-  res.send(gameID);
   // generate random word
-  //Word.find(/*random value*/, function(err, data) {
-    //if (err) return handleErr(err, res);
-    // store gameID: word in object
-    //var gameData = gameData.launch(data.word);
-    // response includes game number
-    //res.json(gameData);
-  //})
+ // Word.count(function (err, data) {
+ //   console.log(data);
+ //   var total = data;
+ //   var random = Math.floor(Math.random() * total);
+ //   Word.find().limit(-1).skip(random).exec(function(err, data) {
+ //     if (err) return handleErr(err, res);
+ //     //store gameID: word in object
+ //     var gameID = gameData.launch(data[0].word);
+ //     //response includes game number
+ //     res.send(gameID);
+ //   });
+ // });
+
+  Word.random(function(err, word) {
+ //   debugger;
+    if (err) throw err;
+    var gameID = gameData.launch(word[0].word);
+    res.send(gameID);
+  })
+});
+
+gameRouter.get('/games', function(req, res) {
+  res.json(gameData);
 });
 
 // make guess to route/:gameID/:guess
