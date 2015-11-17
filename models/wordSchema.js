@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
-//var random = require('mongoose-random');
 
 var wordsSchema = new mongoose.Schema({
   word: String,
+  length: Number,
+  category: String,
   guessed: Number,
   time_avg: Number,
   amountOfGuesses: Number
 });
-//wordsSchema.plugin(random, { path: 'r' })
 
 wordsSchema.statics.random = function (cb) {
   this.count(function(err, data) {
@@ -16,9 +16,8 @@ wordsSchema.statics.random = function (cb) {
     return this.find().limit(-1).skip(random).exec(cb);
   });
 };
-  //var random = Math.floor(Math.random() * total);
-  //this.find().limit(-1).skip(random).exec(cb);
 
 var Word = mongoose.model('Word', wordsSchema);
 module.exports = Word;
+
 
