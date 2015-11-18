@@ -11,7 +11,6 @@ var wordsSchema = new mongoose.Schema({
 
 wordsSchema.statics.random = function(cb) {
   this.count(function(err, data) {
-    debugger;
     var random = Math.floor(Math.random() * data);
     return this.findOne().limit(-1).skip(random).exec(cb);
   });
@@ -20,8 +19,6 @@ wordsSchema.statics.random = function(cb) {
 wordsSchema.methods.setStat = function(guessCount) {
   
 };
-
-//module.exports = mongoose.model('Word', wordSchema);
 wordsSchema.statics.setStat = function (dataObject, cb) {
   this.findOne({word: dataObject.currentWord}, function (err, wordObject) {
     if (err) return console.log(err);
@@ -51,16 +48,6 @@ wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
     });
   });
 };
-
-/*wordsSchema.statics.getStatTime = function (cb) {           
-    return this.findOne({'word': currentWord}, callback)
-};
-wordsSchema.statics.getStatGuessed = function (currentWord, callback) {       
-  return this.findOne({'word' : currentWord}, callback)
-};
-wordsSchema.statics.getStatAmountOfGuesses = function (currentWord, callback) {       
-  return this.findOne({'word' : currentWord}, callback)
-};*/
 
 function average (avg_value, n, new_value) {
   var new_avg = (avg_value*n + new_value)/(n+1);  
