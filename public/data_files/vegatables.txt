@@ -1,0 +1,17 @@
+chive
+garlic
+green onion
+leek
+onion
+scallion
+shallot
+beet
+carrot
+kohlrabi
+parsnip
+potato
+radish
+rutabaga
+potato
+yam
+
