@@ -3,8 +3,7 @@ var mongoose = require('mongoose');
 var random = require('mongoose-random');
 
 //Connecting to DB
-
-mongoose.connect('mongodb://localhost/word_game_dev');
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/word_game_dev')
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
