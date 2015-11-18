@@ -4,7 +4,8 @@
   "description": "A word guessing game",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "start": "node lib/server.js"
   },
   "repository": {
     "type": "git",
