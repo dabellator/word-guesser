@@ -14,7 +14,7 @@
   "keywords": [
     "games"
   ],
-  "author": "Jordan Bundy, Iryna Bonderanko, Walter Nicholas",
+  "author": "Jordan Bundy, Iryna Bondarenko, Walter Nicholas",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dabellator/word-guesser/issues"
@@ -26,14 +26,12 @@
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.12.0",
     "gulp-mocha": "^2.1.3",
-    "mocha": "^2.3.3",
-    "mongoose": "^4.2.5",
-    "mongoose-random": "^0.1.1"
+    "mocha": "^2.3.4",
+    "mongoose": "^4.2.5"
   },
   "dependencies": {
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
-    "mongoose": "^4.2.5",
-    "mongoose-random": "^0.1.1"
+    "mongoose": "^4.2.5"
   }
 }
