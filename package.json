@@ -4,7 +4,8 @@
   "description": "A word guessing game",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "start": "node lib/server.js"
   },
   "repository": {
     "type": "git",
@@ -13,7 +14,7 @@
   "keywords": [
     "games"
   ],
-  "author": "Jordan Bundy, Iryna Bonderanko, Walter Nicholas",
+  "author": "Jordan Bundy, Iryna Bonderenko, Walter Nicholas",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dabellator/word-guesser/issues"

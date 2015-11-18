@@ -34,7 +34,63 @@
 				text-align: center;
 			}
 
-			input {
+			td {
+				font-size: 2.55em;
+				color: white;
+				vertical-align: middle;
+
+				background-color: white;
+				height: 50px;
+				width: 50px;
+				border: 3px hidden #f4f4f0;
+				border-radius: 9px;
+			}
+
+			#container {
+				margin-top: 7.5%;
+			}
+
+			#title {
+				text-align: center;
+				font-size: 6.1em;
+			}
+
+			#options {
+				font-size: 1.2em;
+				letter-spacing: -1px;
+
+				background-color: white;
+				border: 1px solid black;
+				border-radius: 3px;
+				height: 42px;
+				width: 38%;
+				padding-top: 14px;
+				margin-top: 1.3%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			#newgame, #guess {
+				text-align: center;
+				font-size: 2.3em;
+				letter-spacing: .08em;
+
+				background-color: white;
+				border: 1px solid black;
+				border-radius: 3px;
+				height: 49px;
+				width: 32.3%;
+				padding-top: 4px;
+				margin-top: 1.6%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			#guessForm {
+				margin-top: 1.85%;
+			}
+
+			#guessForm input {
 				font-family: "Lucida Console", Monaco, monospace;
 				font-size: 2.65em;
 				text-align: center;
@@ -47,16 +103,47 @@
 				border-radius: 3px;
 			}
 
-			td {
-				font-size: 2.55em;
-				color: white;
-				vertical-align: middle;
+			#guess {
+				width: 23%;
+			}
 
+			#feedback {
+				margin-top: 1.1%;
+				margin-left: auto;
+				margin-right: auto;
+				text-align: center;
+				border-spacing: 8px;
+			}
+			
+			#history {
+				position: absolute;
+				top: 0;
+				width: 23.5%;
+				text-align: center;
+				border-spacing: 5px;
+			}
+
+			#untried {	
+				color: black;
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 23%;
+				text-align: center;
+				border-spacing: 5px;
+			}
+
+			#category, #letters {
+				font-family: "Lucida Console", Monaco, monospace;
 				background-color: white;
-				height: 50px;
-				width: 50px;
-				border: 3px hidden #f4f4f0;
-				border-radius: 9px;
+		    height: 32px;
+		    font-size: 0.75em;	
+		    width: 85px;
+			}
+
+			#letters {
+				width: 55px;
+  	    text-align: center;
 			}
 
 			.full {
@@ -71,58 +158,15 @@
 				background-color: #cc0000;
 			}
 
-			.turns {
+			.turns, .untried {
 				color: black;
 				font-size: 2.1em;
 			}
 
-			.container {
-				margin-top: 9%;
-			}
-
-			#feedback {
-				margin-top: 1.1%;
-				margin-left: auto;
-				margin-right: auto;
-				text-align: center;
-				border-spacing: 8px;
-			}
-
-			#title {
-				text-align: center;
-				font-size: 5.7em;
-			}
-
-			#newgame, #guess {
-				text-align: center;
-				font-size: 2.3em;
-				letter-spacing: .08em;
-
-				background-color: white;
-				border: 1px solid black;
-				border-radius: 3px;
-				height: 49px;
-				width: 31%;
-				padding-top: 4px;
-				margin-top: 1.9%;
-				margin-left: auto;
-				margin-right: auto;
-			}
-
-			#guess {
-				width: 23%;
-			}
-
-			#guessform {
-				margin-top: 2%;
-			}
-
-			#history {
-				position: absolute;
-				top: 0;
-				width: 21.5%;
-				text-align: center;
-				border-spacing: 6px;
+			.lastGuess {
+				color: black;
+				font-size: 1.42em;
+				letter-spacing: -1px;
 			}
 
 		</style>
@@ -131,18 +175,48 @@
 
 		<table id="history"></table>
 
-		<div class="container">
+		<table id="untried"></table>
+
+		<div id="container">
 			<div id="title">wor<span style="color:#cc0000">db</span>reaker</div>
-			<div id="newgame">make new game</div>
-			<form id="guessform">
-				<input type="text" maxlength="8" value="">
+
+			<form id="options">
+				<label>category:</label>
+				<select id="category">
+			    <option value="all">all</option>
+			    <option value="foods">foods</option>
+			    <option value="places">places</option>
+			    <option value="animals">animals</option>
+			  </select>
+			  <label>letters:</label>
+				<select id="letters">
+			    <option value="any">any</option>
+			    <option value="3">3</option>
+			    <option value="4">4</option>
+			    <option value="5">5</option>
+			    <option value="7">7</option>
+			    <option value="8">8</option>
+			  </select>
+			  <input type="radio" name="mode" id="normal" checked> normal
+			  <input type="radio" name="mode" id="hard"> hard
+			</form>
+
+			<div id="newgame">give me a word</div>
+
+			<form id="guessForm">
+				<input id="guessInput" type="text" maxlength="8" value="">
 			</form> 
+
 			<div id="guess" onclick="guess()">guess</div>
+
 			<table id="feedback"></table>
 		</div>
 
 		<script>
 
+			var mode = 'normal';
+			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+			//calling gameID(567) sets id to 567 and returns 567. subsequent calling gameID() returns 567.
 			var gameID = function(set) { 
 				var id = set;
 				return function(set) {
@@ -150,8 +224,8 @@
 					else return id;	
 				}; 
 			}();
-
-			var turns = function(reset) {
+			//calling turns() increments it by one and returns it. calling turns(true) resets it to 0 and returns 0.
+			var turns = function(reset) { 
 				var turns = 0;
 				return function(reset) {
 					if (reset) return turns = 0;
@@ -169,43 +243,45 @@
 				});
 			});
 
-			$("#newgame").click(function() {
-				if ($('#newgame').html() == 'make new game') {
+			$('#newgame').click(function() {
+				if ($('#newgame').html() == 'give me a word') {
+					if ($("input[id='hard']:checked").val()) mode = 'hard';	
+					var options = {
+						category: ($("select[id='category']").val()),
+						letters: ($("select[id='letters']").val()),
+						mode: mode
+					};
+					// alert(options.category + ', ' + options.letters + ', ' + options.mode);
+					resetUntried();
 					turns(true);
-					$("#title").html('wor<span style="color:#cc0000">db</span>reaker');
+					$('#untried').html('');
+					$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
 		  		$('#guess').html('guess');
 					$('#feedback').html('');
 					$('#history').html('');
-		      $.ajax({url: "new", success: function(result) {
+		      $.ajax({url: "new", method: "POST", data: options, success: function(result) {
 		      	$.ajax({url: gameID(result) + '/x', success: function(result) {
-				      $("#newgame").html(result.arr.length + ' letter word');
-				     	$("input").attr("maxlength", result.arr.length);
+				      $('#newgame').html(result.arr.length + ' letter word');
+				     	$('input').attr("maxlength", result.arr.length);
 				  	}});
 			  	}});
 		    }
 			});
 
 			function guess() {
-				var form = document.getElementById('guessform');
-				var input = form.elements[0].value;	
-				form.elements[0].value = "";
+				var input = $('input[id="guessInput"]').val();
+				for (i=0; i<input.length; i++) {
+					removeLetter(input[i]);
+				}
+				$('input[id="guessInput"]').val('');
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
 					if (result.gameOver) winner(result.arr);
+					else if (mode == 'hard') displayHard(result.arr);
 					else displayFeedback(result.arr);
+					displayUntried();
 		  	}});
 			}
 		
-			function winner(resArray) {
-				displayHistory();
-				$('#feedback').html('');
-				for (i=0; i<resArray.length; i++) {
-					$('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
-				}
-				$("#newgame").html('make new game');
-				$("#guess").html('you won!');
-				$("#title").html('wor<span style="color:#248f24">db</span>reaker');
-			}
-
 			function displayFeedback(resArray) {
 				displayHistory();
 				$('#feedback').html('');
@@ -215,12 +291,59 @@
 					if (resArray[i][1] == '0') $('#feedback').append('<td class="none">' + resArray[i][0] + '</td>');
 				}
 			}
+			
+			function displayHard(resArray) {
+				displayHistory();
+				var hardArray = [];
+				var lastGuess = '';
+				for (i=0; i<resArray.length; i++) {
+					lastGuess += resArray[i][0];
+					hardArray.push(resArray[i][1]);
+				}
+				hardArray.sort(function(a, b){return b-a});
+				$('#feedback').html('');
+				$('#feedback').append('<td class="lastGuess">' + lastGuess + '</td>')
+				for (i=0; i<hardArray.length; i++) {
+					if (hardArray[i] == '2') $('#feedback').append('<td class="full"> </td>');
+					if (hardArray[i] == '1') $('#feedback').append('<td class="half"> </td>');
+					if (hardArray[i] == '0') $('#feedback').append('<td class="none"> </td>');
+				}
+			}
+
+			function winner(resArray) {
+				displayHistory();
+				$('#feedback').html('');
+				for (i=0; i<resArray.length; i++) {
+					$('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
+				}
+				$('#newgame').html('give me a word');
+				$('#guess').html('you won!');
+				$('#title').html('wor<span style="color:#248f24">db</span>reaker');
+			}
 
 			function displayHistory() {
 				var turnCount = '<td class="turns">' + turns() + '</td>';
 				var feedback = $('#feedback').html();
 				var history = turnCount + feedback;
 				if (feedback !== '') $('#history').append('<tr>' + history + '</tr>');
+			}
+
+			function displayUntried() {
+				$('#untried').html('<tr>');
+				untriedLetters.forEach(function (val, index) {
+					if ((index % 4) == 0) $('#untried').append('</tr> <tr>');
+					$('#untried').append('<td class="untried">' + val + '</td>');
+				});
+				$('#untried').append('</tr>');
+			}
+
+			function removeLetter(letter) {
+				var index = $.inArray(letter, untriedLetters);
+				if (index !== -1) untriedLetters.splice(index, 1);
+			}
+
+			function resetUntried() {
+				untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 			}
 
 		</script>
