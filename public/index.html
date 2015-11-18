@@ -215,6 +215,7 @@
 		<script>
 
 			var mode = 'normal';
+			var guessArr = [];
 			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 			//calling gameID(567) sets id to 567 and returns 567. subsequent calling gameID() returns 567.
 			var gameID = function(set) { 
@@ -275,6 +276,7 @@
 				}
 				$('input[id="guessInput"]').val('');
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
+					guessArr.push(result.arr);
 					if (result.gameOver) winner(result.arr);
 					else if (mode == 'hard') displayHard(result.arr);
 					else displayFeedback(result.arr);
@@ -311,6 +313,16 @@
 			}
 
 			function winner(resArray) {
+				var endGameData = {
+					mode: mode,
+					guessArr: guessArr
+				};
+
+				$.ajax({url: gameID() + '/end', method: "POST", data: endGameData, success: function(result) {
+					// alert(result.yourTime); //uncomment this line to test functionality 
+					// displayStats(result);
+				}});
+				guessArr = [];
 				displayHistory();
 				$('#feedback').html('');
 				for (i=0; i<resArray.length; i++) {
@@ -325,7 +337,7 @@
 				var turnCount = '<td class="turns">' + turns() + '</td>';
 				var feedback = $('#feedback').html();
 				var history = turnCount + feedback;
-				if (feedback !== '') $('#history').append('<tr>' + history + '</tr>');
+				if (feedback !== '') $('#history').prepend('<tr>' + history + '</tr>');
 			}
 
 			function displayUntried() {
