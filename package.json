@@ -21,6 +21,7 @@
   "homepage": "https://github.com/dabellator/word-guesser#readme",
   "devDependencies": {
     "chai": "^3.4.1",
+    "chai-http": "^1.0.0",
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.12.0",
     "gulp-mocha": "^2.1.3",
