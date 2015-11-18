@@ -9,9 +9,8 @@ var gameData = new GameData();
 var gameRouter = module.exports = express.Router();
 
 // launch game instance
-gameRouter.get('/new', function(req, res) {
+gameRouter.get('/new', bodyParser.urlencoded({extended:true}), function(req, res) {
   Word.random(function(err, word) {
- //   debugger;
     if (err) throw err;
     var gameID = gameData.launch(word.word);
     res.send(gameID);
