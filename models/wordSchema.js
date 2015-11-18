@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var wordSchema = new mongoose.Schema({
+var wordsSchema = new mongoose.Schema({
   word: String,
   length: Number,
   category: String,
@@ -9,7 +9,7 @@ var wordSchema = new mongoose.Schema({
   amountOfGuesses: Number
 });
 
-wordSchema.statics.random = function(cb) {
+wordsSchema.statics.random = function(cb) {
   this.count(function(err, data) {
     debugger;
     var random = Math.floor(Math.random() * data);
@@ -17,29 +17,29 @@ wordSchema.statics.random = function(cb) {
   });
 };
 
-wordSchema.methods.setStat = function(guessCount) {
+wordsSchema.methods.setStat = function(guessCount) {
   
 };
 
-module.exports = mongoose.model('Word', wordSchema);
+//module.exports = mongoose.model('Word', wordSchema);
 wordsSchema.statics.setStat = function (dataObject, cb) {
-  this.findOne({'word': dataObject.currentWord}, function (err, wordObject) {
+  this.findOne({word: dataObject.currentWord}, function (err, wordObject) {
     if (err) return console.log(err);
     var time = Math.floor((dataObject.timeEnd - dataObject.timeStart)/1000);
     var newAvgTime = average(wordObject.time_avg, wordObject.guessed, time);
-    var newAvgGuesses = average(wordObject.amountOfGuesses, wordObject.guessed, dataObject.guesses);
+    var newAvgGuesses = average(wordObject.amountOfGuesses, wordObject.guessed, dataObject.guessArray.length);
     var newGuessed = wordObject.guessed + 1;
-    this.update({word: dataObject.currentWord}, { $set: { time_avg: newAvgTime, amountOfGuesses: newAvgGuesses, guessed: newGuessed }}).exec(cb);
+    this.update({word: dataObject.currentWord}, { $set: { time_avg: newAvgTime, amountOfGuesses: newAvgGuesses, guessed: newGuessed }}).exec(cb(err, {avgTime:newAvgTime, avgGuesses:newAvgGuesses, yourTime:time}));
   });
 };
 
 wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
   var query;
-  if ((numberOfLetters == 'any') && (chosenCategory != 'any')) {
+  if ((numberOfLetters === 'any') && (chosenCategory !== 'all')) {
     query = {'category': chosenCategory};
-  } else if ((chosenCategory == 'any') && (numberOfLetters != 'any')) {
+  } else if ((chosenCategory === 'all') && (numberOfLetters !== 'any')) {
     query = {'length': numberOfLetters};
-  } else if ((chosenCategory != 'any') && (numberOfLetters != 'any')) {
+  } else if ((chosenCategory !== 'all') && (numberOfLetters !== 'any')) {
     query = {'category': chosenCategory, 'length': numberOfLetters};
   } else { 
     query = {};

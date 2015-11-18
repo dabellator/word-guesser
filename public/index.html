@@ -260,6 +260,7 @@
 					$('#feedback').html('');
 					$('#history').html('');
 		      $.ajax({url: "new", method: "POST", data: options, success: function(result) {
+            console.log(result);
 		      	$.ajax({url: gameID(result) + '/x', success: function(result) {
 				      $('#newgame').html(result.arr.length + ' letter word');
 				     	$('input').attr("maxlength", result.arr.length);
@@ -275,7 +276,7 @@
 				}
 				$('input[id="guessInput"]').val('');
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
-					if (result.gameOver) winner(result.arr);
+	  		if (result.gameOver) winner(result.arr);
 					else if (mode == 'hard') displayHard(result.arr);
 					else displayFeedback(result.arr);
 					displayUntried();
