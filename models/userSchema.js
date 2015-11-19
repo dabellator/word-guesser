@@ -31,4 +31,9 @@ userSchema.methods.checkPassword = function(password) {
   return bcrypt.compareSync(password, this.auth.basic.password);
 };
 
+userSchema.methods.generateToken = function(cb) {
+  var id = this._id;
+  eat.encode({id:id}, process.env.APP_SECRET, cb);
+};
+
 module.exports = mongoose.model('User', userSchema);
