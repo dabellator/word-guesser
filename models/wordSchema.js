@@ -12,7 +12,7 @@ var wordsSchema = new mongoose.Schema({
 wordsSchema.statics.setStat = function (dataObject, cb) {
   this.findOne({'word': dataObject.currentWord}, function (err, wordObject) {
     if (err) return console.log(err);
-    var time = Math.floor((dataObject.timeEnd - dataObject.timeStart)/1000);
+    var time = Math.round((dataObject.timeEnd - dataObject.timeStart)/1000);
     var newAvgTime = average(wordObject.time_avg, wordObject.guessed, time);
     var newAvgGuesses = average(wordObject.amountOfGuesses, wordObject.guessed, dataObject.guesses);
     var newGuessed = wordObject.guessed + 1;
@@ -51,7 +51,7 @@ wordsSchema.statics.getStatAmountOfGuesses = function (currentWord, callback) {
 
 function average (avg_value, n, new_value) {
   var new_avg = (avg_value*n + new_value)/(n+1);  
-  return new_avg;
+  return Math.round(new_avg);
 }
 
 var Word = mongoose.model('Word', wordsSchema);
