@@ -4,6 +4,7 @@ var Word = require(__dirname + '/../models/wordSchema');
 var handleErr = require(__dirname + '/../lib/handle-err');
 var GameData = require(__dirname + '/../lib/game-data');
 var game = require(__dirname + '/../lib/game');
+var eatAuth = require(__dirname + '/../lib/eat_auth');
 
 var gameData = new GameData();
 var gameRouter = module.exports = express.Router();
@@ -24,7 +25,7 @@ gameRouter.post('/new', bodyParser.urlencoded({extended:true}), function(req, re
   })
 });
 
-gameRouter.get('/games', function(req, res) {
+gameRouter.get('/games', bodyParser.json(), eatAuth, function(req, res) {
   res.json(gameData);
 });
 
