@@ -10,10 +10,12 @@ var gameRouter = module.exports = express.Router();
 
 // launch game instance
 gameRouter.post('/new', bodyParser.urlencoded({extended:true}), function(req, res) {
-  Word.random(function(err, word) {
+  Word.searchDB(req.body.category, req.body.letters, function(err, word) {
     if (err) throw err;
-    var gameID = gameData.launch(word.word);
-    res.send(gameID);
+    console.log(word);   
+    if (word) var gameID = gameData.launch(word.word);
+    console.log(gameID);
+    res.send(gameID || {err: true});
   })
 });
 
@@ -22,27 +24,23 @@ gameRouter.get('/games', function(req, res) {
 });
 
 gameRouter.get('/:gameID/:guess', function(req, res, next) {
-  req.answer = gameData.currentGames[req.params.gameID];
-  req.guessData = game(req.answer, req.params.guess);
+  req.game = gameData.currentGames[req.params.gameID]; 
+  req.guessData = game(req.game.currentWord, req.params.guess); 
+  req.game.guessArray.push(req.guessData.arr);
+  console.log(gameData);
   next();
 });
 gameRouter.get('/:gameID/:guess', function(req, res, next) {
   if (req.guessData.gameOver) {
-    console.log(1);
-    var amount = 5;
-    Word.findOneAndUpdate({word: req.answer}, {$inc: {guessed: amount}}, function(err, word) {
-      if (err) throw err;
+    req.game.timeEnd = Date.now();
+    gameData.end(req.params.gameID);
+    Word.setStat(req.game, function(err, endObj) {
+      if(err) throw err;
+      req.guessData.stats = endObj
       res.json(req.guessData);
     });
-  } else {next();}
-});
-gameRouter.get('/:gameID/:guess', function(req, res) {
-  console.log(2);
-  res.json(req.guessData);
+
+  } else { res.json(req.guessData) }
 });
 
-gameRouter.post('/:gameID', function(req, res) {
-  gameData.end(req.params.gameID);
- 
-});
 
