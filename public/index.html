@@ -30,6 +30,10 @@
 				background-color: #ebebe0;
 			}
 
+			button {
+				font-family: "Lucida Console", Monaco, monospace;
+			}
+
 			form {
 				text-align: center;
 			}
@@ -52,7 +56,7 @@
 
 			#title {
 				text-align: center;
-				font-size: 6.1em;
+				font-size: 6.4em;
 			}
 
 			#options {
@@ -63,11 +67,15 @@
 				border: 1px solid black;
 				border-radius: 3px;
 				height: 42px;
-				width: 38%;
+				width: 41%;
 				padding-top: 14px;
 				margin-top: 1.3%;
 				margin-left: auto;
 				margin-right: auto;
+			}
+
+			#newgame {
+				box-shadow: 4px 4px 3px #888888;
 			}
 
 			#newgame, #guess {
@@ -75,36 +83,47 @@
 				font-size: 2.3em;
 				letter-spacing: .08em;
 
+				cursor: default;
 				background-color: white;
 				border: 1px solid black;
 				border-radius: 3px;
 				height: 49px;
-				width: 32.3%;
+				width: 34%;
 				padding-top: 4px;
 				margin-top: 1.6%;
 				margin-left: auto;
 				margin-right: auto;
 			}
 
-			#guessForm {
-				margin-top: 1.85%;
+			#stats {
+				display: none;
+				margin-left: auto;
+				margin-right: auto;
+				font-size: 1.1em;
+				padding-top: 5px;
+				height: 49px;
 			}
 
-			#guessForm input {
+			#stats, #guessForm input {
 				font-family: "Lucida Console", Monaco, monospace;
-				font-size: 2.65em;
 				text-align: center;
-				letter-spacing: 6px;
-				color: #cc0000;
 
-				height: 54px;
-				width: 27%;
+				background-color: white;
+				margin-top: 1.85%;
+				width: 28.5%;
 				border: 1px solid black;
 				border-radius: 3px;
 			}
 
+			#guessForm input {
+				height: 54px;
+				font-size: 2.65em;
+				letter-spacing: 6px;
+				color: #cc0000;
+			}
+
 			#guess {
-				width: 23%;
+				width: 24%;
 			}
 
 			#feedback {
@@ -123,10 +142,25 @@
 				border-spacing: 5px;
 			}
 
+			#hideUntried {
+				display: none;
+				position: absolute;
+				top: 3px;
+				right: 3px;
+				width: 22.4%;
+				height: 25px;
+				font-size: 1.2em;
+				text-align: center;
+				background-color: white;
+				border: 1px solid black;
+				border-radius: 3px;
+				box-shadow: 3px 3px 2px #888888;
+			}
+
 			#untried {	
 				color: black;
 				position: absolute;
-				top: 0;
+				top: 20px;
 				right: 0;
 				width: 23%;
 				text-align: center;
@@ -174,8 +208,8 @@
 	<body>
 
 		<table id="history"></table>
-
 		<table id="untried"></table>
+		<button id="hideUntried">hide untried letters</button>
 
 		<div id="container">
 			<div id="title">wor<span style="color:#cc0000">db</span>reaker</div>
@@ -184,16 +218,19 @@
 				<label>category:</label>
 				<select id="category">
 			    <option value="all">all</option>
-			    <option value="foods">foods</option>
-			    <option value="places">places</option>
 			    <option value="animals">animals</option>
+			    <option value="clothes">clothes</option>
+			    <option value="flowers">flowers</option>
+			    <option value="fruits">fruits</option>
+			    <option value="vegetables">veggies</option>
 			  </select>
 			  <label>letters:</label>
 				<select id="letters">
-			    <option value="any">any</option>
+			    <option value="any">any</option>	
 			    <option value="3">3</option>
 			    <option value="4">4</option>
 			    <option value="5">5</option>
+			    <option value="6">6</option>
 			    <option value="7">7</option>
 			    <option value="8">8</option>
 			  </select>
@@ -201,11 +238,13 @@
 			  <input type="radio" name="mode" id="hard"> hard
 			</form>
 
-			<div id="newgame">give me a word</div>
+			<div id="newgame" onclick="makeGame()">give me a word</div>
 
 			<form id="guessForm">
 				<input id="guessInput" type="text" maxlength="8" value="">
 			</form> 
+
+			<div id="stats"></div>
 
 			<div id="guess" onclick="guess()">guess</div>
 
@@ -214,8 +253,9 @@
 
 		<script>
 
-			var mode = 'normal';
+			var mode;
 			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+
 			//calling gameID(567) sets id to 567 and returns 567. subsequent calling gameID() returns 567.
 			var gameID = function(set) { 
 				var id = set;
@@ -238,45 +278,69 @@
 				  if(e.keyCode == 13) {
 				    e.preventDefault();
 				    guess();
-				    return false;
+				    return false;	
 				  }
 				});
 			});
 
-			$('#newgame').click(function() {
+			$('#hideUntried').click(function() {
+				if ($('#hideUntried').html() == 'hide untried letters') {
+					$('#untried').css('display', 'none');
+					$('#hideUntried').html('show untried letters');
+				} else {
+					$('#untried').css('display', 'table');
+					$('#hideUntried').html('hide untried letters');
+				}
+			});
+
+			function makeGame() {
 				if ($('#newgame').html() == 'give me a word') {
-					if ($("input[id='hard']:checked").val()) mode = 'hard';	
+					if ($("input[id='hard']:checked").val()) mode = 'hard';
+					if ($("input[id='normal']:checked").val()) mode = 'normal';
 					var options = {
 						category: ($("select[id='category']").val()),
 						letters: ($("select[id='letters']").val()),
 						mode: mode
 					};
-					// alert(options.category + ', ' + options.letters + ', ' + options.mode);
-					resetUntried();
-					turns(true);
-					$('#untried').html('');
-					$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
-		  		$('#guess').html('guess');
-					$('#feedback').html('');
-					$('#history').html('');
 		      $.ajax({url: "new", method: "POST", data: options, success: function(result) {
-            console.log(result);
-		      	$.ajax({url: gameID(result) + '/x', success: function(result) {
-				      $('#newgame').html(result.arr.length + ' letter word');
-				     	$('input').attr("maxlength", result.arr.length);
-				  	}});
+		      	if(result.err) {
+		      		alert('No word found.');
+				    } else {
+			      	gameID(result.id);
+			      	newGameStarted(result.length);
+				    }
 			  	}});
 		    }
-			});
+			}
+
+			function newGameStarted(letters) { 
+				resetUntried();
+				turns(true);
+				$('#guessForm').css('display', 'block');
+				$('#stats').css('display', 'none');
+				$('#newgame').css('box-shadow', 'none');
+				$('#guess').css('box-shadow', '4px 4px 3px #888888');
+				$('#hideUntried').css('display', 'none');
+				$('input[id="guessInput"]').val('');
+				$('#guessInput').select();
+				$('#untried').html('');
+				$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
+		  	$('#guess').html('guess');
+				$('#feedback').html('');
+				$('#history').html('');
+	     	$('#newgame').html(letters + ' letter word');
+		   	$('input').attr("maxlength", letters);
+			}
 
 			function guess() {
+				$('#hideUntried').css('display', 'block');
 				var input = $('input[id="guessInput"]').val();
 				for (i=0; i<input.length; i++) {
 					removeLetter(input[i]);
 				}
 				$('input[id="guessInput"]').val('');
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
-	  		if (result.gameOver) winner(result.arr);
+					if (result.gameOver) winner(result.arr, result.stats);
 					else if (mode == 'hard') displayHard(result.arr);
 					else displayFeedback(result.arr);
 					displayUntried();
@@ -311,13 +375,19 @@
 				}
 			}
 
-			function winner(resArray) {
+			function winner(resArray, stats) {
 				displayHistory();
 				$('#feedback').html('');
 				for (i=0; i<resArray.length; i++) {
 					$('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
 				}
+				$('#stats').html('avg time: ' + stats.avgTime + ', your time: ' + stats.yourTime);
+				$('#stats').append('<br>avg guesses: ' + stats.avgGuesses + ', your guesses: ' + turns());
 				$('#newgame').html('give me a word');
+				$('#newgame').css('box-shadow', '3px 3px 2px #888888');
+				$('#guess').css('box-shadow', 'none');
+				$('#guessForm').css('display', 'none');
+				$('#stats').css('display', 'block');
 				$('#guess').html('you won!');
 				$('#title').html('wor<span style="color:#248f24">db</span>reaker');
 			}
@@ -326,7 +396,7 @@
 				var turnCount = '<td class="turns">' + turns() + '</td>';
 				var feedback = $('#feedback').html();
 				var history = turnCount + feedback;
-				if (feedback !== '') $('#history').append('<tr>' + history + '</tr>');
+				if (feedback !== '') $('#history').prepend('<tr>' + history + '</tr>');
 			}
 
 			function displayUntried() {

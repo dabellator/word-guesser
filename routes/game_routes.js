@@ -13,9 +13,14 @@ gameRouter.post('/new', bodyParser.urlencoded({extended:true}), function(req, re
   Word.searchDB(req.body.category, req.body.letters, function(err, word) {
     if (err) throw err;
     console.log(word);   
-    if (word) var gameID = gameData.launch(word.word);
-    console.log(gameID);
-    res.send(gameID || {err: true});
+    if (word) {
+      var gameID = gameData.launch(word.word);
+      var newGameObj = {
+        id: gameID,
+        length: word.word.length
+      };
+    }
+    res.send(newGameObj || {err: true});
   })
 });
 
@@ -27,7 +32,7 @@ gameRouter.get('/:gameID/:guess', function(req, res, next) {
   req.game = gameData.currentGames[req.params.gameID]; 
   req.guessData = game(req.game.currentWord, req.params.guess); 
   req.game.guessArray.push(req.guessData.arr);
-  console.log(gameData);
+  // console.log(gameData);
   next();
 });
 gameRouter.get('/:gameID/:guess', function(req, res, next) {

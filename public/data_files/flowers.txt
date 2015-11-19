@@ -21,8 +21,6 @@ poppy
 rose
 rose
 sunflower
-sunflower
 thistle
 tulip
-violet
 violet
