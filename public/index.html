@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<script src='https://code.jquery.com/jquery-1.9.1.min.js'></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 		<style>
 
 			html, body, div, span, applet, object, iframe,
@@ -75,7 +76,7 @@
 			}
 
 			#newgame {
-				box-shadow: 4px 4px 3px #888888;
+				box-shadow: 5px 5px 3px #888888;
 			}
 
 			#newgame, #guess {
@@ -87,9 +88,9 @@
 				background-color: white;
 				border: 1px solid black;
 				border-radius: 3px;
-				height: 49px;
+				height: 47px;
 				width: 34%;
-				padding-top: 4px;
+				padding-top: 7px;
 				margin-top: 1.6%;
 				margin-left: auto;
 				margin-right: auto;
@@ -144,10 +145,13 @@
 
 			#hideUntried {
 				display: none;
+			}
+
+			#hideUntried, #showRules {
+				width: 22.4%;
 				position: absolute;
 				top: 3px;
 				right: 3px;
-				width: 22.4%;
 				height: 25px;
 				font-size: 1.2em;
 				text-align: center;
@@ -203,9 +207,48 @@
 				letter-spacing: -1px;
 			}
 
+			#rulesDialog {
+				padding: 8px;
+				background-color: white;
+				border: 1px solid black;
+				border-radius: 3px;
+				box-shadow: 5px 5px 3px #888888;
+			}
+
+			.ui-dialog-titlebar {
+				font-size: 2.4em;
+				margin-bottom: 3px;
+				background-color: white;
+				text-align: center;
+				border: 1px solid black;
+				border-radius: 3px;
+				box-shadow: 5px 5px 3px #888888;
+			}
+
+			.ui-dialog-titlebar-close {
+				display: none;
+			}
+
 		</style>
 	<head>
 	<body>
+
+		<div id="rulesDialog" title="Rules">
+			Specify your options and click 'give me a word' to begin. 
+			<br><br> After each guess, you will be given feedback to help you figure out the word. 
+			<br><br> For example, if the solution is 'cat' and you guess 'dog', you will see this:
+			<br> <table id="feedback"><tr><td class="none">d</td><td class="none">o</td><td class="none">g</td></tr></table>
+			<br> The red letters mean there is no 'd', 'o', or 'g' in the word you are guessing. 
+			<br><br> If you then guessed 'tap', you would see this:
+			<br> <table id="feedback"><tr><td class="half">t</td><td class="full">a</td><td class="none">p</td></tr></table>
+			<br> The yellow 't' means the solution contains 't', but not at the same position. 
+			<br><br> The green 'a' means the solution contains 'a', and at the same position (second letter in the word).
+			<br><br> Now you know 'a' is the second letter. You also know 't' is in the word, but it's not the first letter. 
+			<br><br> So it must be the third! Finally, you guess 'cat'. 
+			<br> <table id="feedback"><tr><td class="full">c</td><td class="full">a</td><td class="full">t</td></tr></table>
+			<br> Wow, you're a natural! Hit 'esc' key to close rules.
+		</div>
+		<button id="showRules">show rules</button>
 
 		<table id="history"></table>
 		<table id="untried"></table>
@@ -252,6 +295,16 @@
 		</div>
 
 		<script>
+
+			$(function() {
+				$("#rulesDialog").dialog({
+					width: '75%',
+					autoOpen: false
+				});
+				$("#showRules").on("click", function() {
+					$("#rulesDialog").dialog("open");
+				});
+			});
 
 			var mode;
 			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
@@ -307,29 +360,11 @@
 		      		alert('No word found.');
 				    } else {
 			      	gameID(result.id);
-			      	newGameStarted(result.length);
+			      	turns(true);
+			      	newGameDisplay(result.length);
 				    }
 			  	}});
 		    }
-			}
-
-			function newGameStarted(letters) { 
-				resetUntried();
-				turns(true);
-				$('#guessForm').css('display', 'block');
-				$('#stats').css('display', 'none');
-				$('#newgame').css('box-shadow', 'none');
-				$('#guess').css('box-shadow', '4px 4px 3px #888888');
-				$('#hideUntried').css('display', 'none');
-				$('input[id="guessInput"]').val('');
-				$('#guessInput').select();
-				$('#untried').html('');
-				$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
-		  	$('#guess').html('guess');
-				$('#feedback').html('');
-				$('#history').html('');
-	     	$('#newgame').html(letters + ' letter word');
-		   	$('input').attr("maxlength", letters);
 			}
 
 			function guess() {
@@ -339,6 +374,7 @@
 					removeLetter(input[i]);
 				}
 				$('input[id="guessInput"]').val('');
+				$('#guessInput').select();
 				$.ajax({url: gameID() +'/' + input, success: function(result) {
 					if (result.gameOver) winner(result.arr, result.stats);
 					else if (mode == 'hard') displayHard(result.arr);
@@ -381,22 +417,25 @@
 				for (i=0; i<resArray.length; i++) {
 					$('#feedback').append('<td class="full">' + resArray[i][0] + '</td>');
 				}
-				$('#stats').html('avg time: ' + stats.avgTime + ', your time: ' + stats.yourTime);
-				$('#stats').append('<br>avg guesses: ' + stats.avgGuesses + ', your guesses: ' + turns());
-				$('#newgame').html('give me a word');
-				$('#newgame').css('box-shadow', '3px 3px 2px #888888');
-				$('#guess').css('box-shadow', 'none');
-				$('#guessForm').css('display', 'none');
-				$('#stats').css('display', 'block');
-				$('#guess').html('you won!');
-				$('#title').html('wor<span style="color:#248f24">db</span>reaker');
+				displayStats(stats);
+				endGameDisplay();
+			}
+
+			function displayStats(stats) {
+				var yourTurns = turns();
+				if (stats.yourTime < stats.avgTime) $('#stats').html('avg time: ' + stats.avgTime + ', your time: <span style="color:#248f24">' + stats.yourTime);
+				else if (stats.yourTime > stats.avgTime) $('#stats').html('avg time: ' + stats.avgTime + ', your time: <span style="color:#cc0000">' + stats.yourTime);
+				else $('#stats').html('avg time: ' + stats.avgTime + ', your time: ' + stats.yourTime);
+				if (yourTurns < stats.avgGuesses) $('#stats').append('<br>avg guesses: ' + stats.avgGuesses + ', your guesses: <span style="color:#248f24">' + yourTurns);
+				else if (yourTurns > stats.avgGuesses) $('#stats').append('<br>avg guesses: ' + stats.avgGuesses + ', your guesses: <span style="color:#cc0000">' + yourTurns);
+				else $('#stats').append('<br>avg guesses: ' + stats.avgGuesses + ', your guesses: ' + yourTurns);
 			}
 
 			function displayHistory() {
 				var turnCount = '<td class="turns">' + turns() + '</td>';
 				var feedback = $('#feedback').html();
 				var history = turnCount + feedback;
-				if (feedback !== '') $('#history').prepend('<tr>' + history + '</tr>');
+				if (feedback !== '') $('#history').append('<tr>' + history + '</tr>');
 			}
 
 			function displayUntried() {
@@ -415,6 +454,34 @@
 
 			function resetUntried() {
 				untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+			}
+
+			function newGameDisplay(letters) { 
+				resetUntried();
+				$('#guessForm').css('display', 'block');
+				$('#stats').css('display', 'none');
+				$('#newgame').css('box-shadow', 'none');
+				$('#guess').css('box-shadow', '5px 5px 3px #888888');
+				$('#hideUntried').css('display', 'none');
+				$('input[id="guessInput"]').val('');
+				$('#guessInput').select();
+				$('#untried').html('');
+				$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
+		  	$('#guess').html('guess');
+				$('#feedback').html('');
+				$('#history').html('');
+	     	$('#newgame').html(letters + ' letter word');
+		   	$('input').attr("maxlength", letters);
+			}
+
+			function endGameDisplay() {
+				$('#newgame').html('give me a word');
+				$('#newgame').css('box-shadow', '5px 5px 3px #888888');
+				$('#guess').css('box-shadow', 'none');
+				$('#guessForm').css('display', 'none');
+				$('#stats').css('display', 'block');
+				$('#guess').html('you won!');
+				$('#title').html('wor<span style="color:#248f24">db</span>reaker');
 			}
 
 		</script>
