@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src='http://code.jquery.com/jquery-1.9.1.min.js'></script>
+		<script src='https://code.jquery.com/jquery-1.9.1.min.js'></script>
 		<style>
 
 			html, body, div, span, applet, object, iframe,
@@ -218,13 +218,15 @@
 				<label>category:</label>
 				<select id="category">
 			    <option value="all">all</option>
-			    <option value="fruits">fruits</option>
-			    <option value="places">places</option>
 			    <option value="animals">animals</option>
+			    <option value="clothes">clothes</option>
+			    <option value="flowers">flowers</option>
+			    <option value="fruits">fruits</option>
+			    <option value="vegetables">veggies</option>
 			  </select>
 			  <label>letters:</label>
 				<select id="letters">
-			    <option value="any">any</option>
+			    <option value="any">any</option>	
 			    <option value="3">3</option>
 			    <option value="4">4</option>
 			    <option value="5">5</option>
@@ -236,13 +238,13 @@
 			  <input type="radio" name="mode" id="hard"> hard
 			</form>
 
-			<div id="newgame">give me a word</div>
+			<div id="newgame" onclick="makeGame()">give me a word</div>
 
 			<form id="guessForm">
 				<input id="guessInput" type="text" maxlength="8" value="">
 			</form> 
 
-			<div id="stats"> AFAS </div>
+			<div id="stats"></div>
 
 			<div id="guess" onclick="guess()">guess</div>
 
@@ -291,15 +293,8 @@
 				}
 			});
 
-			$('#newgame').click(function() {
+			function makeGame() {
 				if ($('#newgame').html() == 'give me a word') {
-					$('#guessForm').css('display', 'block');
-					$('#stats').css('display', 'none');
-					$('#newgame').css('box-shadow', 'none');
-					$('#guess').css('box-shadow', '4px 4px 3px #888888');
-					$('#hideUntried').css('display', 'none');
-					$('input[id="guessInput"]').val('');
-					$('#guessInput').select();
 					if ($("input[id='hard']:checked").val()) mode = 'hard';
 					if ($("input[id='normal']:checked").val()) mode = 'normal';
 					var options = {
@@ -307,21 +302,35 @@
 						letters: ($("select[id='letters']").val()),
 						mode: mode
 					};
-					// alert(options.category + ', ' + options.letters + ', ' + options.mode);
-					resetUntried();
-					turns(true);
-					$('#untried').html('');
-					$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
-		  		$('#guess').html('guess');
-					$('#feedback').html('');
-					$('#history').html('');
 		      $.ajax({url: "new", method: "POST", data: options, success: function(result) {
-		      	gameID(result.id);
-		      	$('#newgame').html(result.length + ' letter word');
-			     	$('input').attr("maxlength", result.length);
+		      	if(result.err) {
+		      		alert('No word found.');
+				    } else {
+			      	gameID(result.id);
+			      	newGameStarted(result.length);
+				    }
 			  	}});
 		    }
-			});
+			}
+
+			function newGameStarted(letters) { 
+				resetUntried();
+				turns(true);
+				$('#guessForm').css('display', 'block');
+				$('#stats').css('display', 'none');
+				$('#newgame').css('box-shadow', 'none');
+				$('#guess').css('box-shadow', '4px 4px 3px #888888');
+				$('#hideUntried').css('display', 'none');
+				$('input[id="guessInput"]').val('');
+				$('#guessInput').select();
+				$('#untried').html('');
+				$('#title').html('wor<span style="color:#cc0000">db</span>reaker');
+		  	$('#guess').html('guess');
+				$('#feedback').html('');
+				$('#history').html('');
+	     	$('#newgame').html(letters + ' letter word');
+		   	$('input').attr("maxlength", letters);
+			}
 
 			function guess() {
 				$('#hideUntried').css('display', 'block');

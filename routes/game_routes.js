@@ -13,11 +13,13 @@ gameRouter.post('/new', bodyParser.urlencoded({extended:true}), function(req, re
   Word.searchDB(req.body.category, req.body.letters, function(err, word) {
     if (err) throw err;
     console.log(word);   
-    if (word) var gameID = gameData.launch(word.word);
-    var newGameObj = {
-      id: gameID,
-      length: word.word.length
-    };
+    if (word) {
+      var gameID = gameData.launch(word.word);
+      var newGameObj = {
+        id: gameID,
+        length: word.word.length
+      };
+    }
     res.send(newGameObj || {err: true});
   })
 });

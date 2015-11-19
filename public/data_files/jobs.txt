@@ -23,7 +23,7 @@ doctor
 editor
 engineer
 farmer
-fire fighter
+firefighter
 fisherman
 judge
 lawyer
