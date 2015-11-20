@@ -57,4 +57,11 @@ userSchema.methods.generateToken = function(cb) {
   eat.encode({id:id}, process.env.APP_SECRET, cb);
 };
 
-module.exports = mongoose.model('User', userSchema);
+var User = mongoose.model('User', userSchema);
+module.exports = User;
+
+User.schema.path('username').validate(function(value, callback) {
+  User.findOne({username: value}, function (err, user) {
+    if (user) callback (false);
+  });
+}, 'This user is already registered');
