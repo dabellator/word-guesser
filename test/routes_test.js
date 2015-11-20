@@ -22,17 +22,35 @@ describe('The game routes', function() {
 
   it('should create a new game', function(done) {
     chai.request('localhost:3000')
-      .get('/new')
+      .post('/new')
+      .send({category:'all',letters:'any'})
       .end(function(err, res) {
         expect(err).to.eql(null);
-        expect(res.text.length).to.eql(4);
+        expect(res.body.id).to.exist;
+        this.id = res.body.id;
         done();
-      });
+      }.bind(this));
   });
 
   it('should respond with guess info', function(done) {
-    console.log(this.sample);
-    done();
+    chai.request('localhost:3000')
+      .get('/' + this.id + '/guess')
+      .end(function(err, res) {
+        expect(err).to.eql(null);
+        expect(res.body.gameOver).to.eql(false);
+        done();
+      }.bind(this));
+  });
+
+  it('should respond win the game', function(done) {
+    chai.request('localhost:3000')
+      .get('/' + this.id + '/hello')
+      .end(function(err, res) {
+        console.log(res.body);
+        expect(err).to.eql(null);
+        expect(res.body.gameOver).to.eql(true);
+        done();
+      }.bind(this));
   })
 });
 
