@@ -229,6 +229,23 @@
 				display: none;
 			}
 
+			#signup {
+				padding: 6px;
+				border: 1px solid black;
+				border-radius: 3px;
+				background-color: white;
+				position: absolute;
+				bottom: 3px;
+				right: 3px;
+				width: 20%;
+				height: 300px;
+			}
+
+			#signup input {
+				padding: 6px;
+				width: 100px;
+			}
+
 		</style>
 	<head>
 	<body>
@@ -287,6 +304,20 @@
 				<input id="guessInput" type="text" maxlength="8" value="">
 			</form> 
 
+			<div id="signup"> 
+				<div id="demo"> demo message here </div>
+
+				<br><label> username: </label><input id="newUser" type="text" maxlength="10" value="">
+				<br><label> password: </label><input id="newPass" type="text" maxlength="10" value="">
+				<br><label> repeat pass: </label><input id="repeatPass" type="text" maxlength="10" value="">
+				<br><button id="signupButton" onclick="signup()"> sign up </button>
+
+				<br><br><div id="demo2"> demo2 message here </div>
+				<br><label> username: </label><input id="user" type="text" maxlength="10" value="">
+				<br><label> password: </label><input id="pass" type="text" maxlength="10" value="">
+				<br><button id="signinButton" onclick="signin()"> sign in </button>
+			</div>
+
 			<div id="stats"></div>
 
 			<div id="guess" onclick="guess()">guess</div>
@@ -296,16 +327,7 @@
 
 		<script>
 
-			$(function() {
-				$("#rulesDialog").dialog({
-					width: '75%',
-					autoOpen: false
-				});
-				$("#showRules").on("click", function() {
-					$("#rulesDialog").dialog("open");
-				});
-			});
-
+			var verySecureGlobalToken = false;
 			var mode;
 			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 
@@ -326,6 +348,16 @@
 				}
 			}();
 
+			$(function() { //opens rules dialog when #showRules button clicked
+				$("#rulesDialog").dialog({
+					width: '75%',
+					autoOpen: false
+				});
+				$("#showRules").on("click", function() {
+					$("#rulesDialog").dialog("open");
+				});
+			});
+			
 			$(document).ready(function() { //prevents default behavior of hitting enter from a form field, runs guess() instead
 				$(document).on('keypress', 'form input[type="text"]', function(e) {
 				  if(e.keyCode == 13) {
@@ -336,7 +368,7 @@
 				});
 			});
 
-			$('#hideUntried').click(function() {
+			$('#hideUntried').click(function() { //hides/shows the list of yet to be guessed letters
 				if ($('#hideUntried').html() == 'hide untried letters') {
 					$('#untried').css('display', 'none');
 					$('#hideUntried').html('show untried letters');
@@ -353,8 +385,12 @@
 					var options = {
 						category: ($("select[id='category']").val()),
 						letters: ($("select[id='letters']").val()),
-						mode: mode
+						mode: mode,
+						token: verySecureGlobalToken
 					};
+
+					if (options.token) alert('your token is ' + options.token);
+
 		      $.ajax({url: "new", method: "POST", data: options, success: function(result) {
 		      	if(result.err) {
 		      		alert('No word found.');
@@ -365,6 +401,60 @@
 				    }
 			  	}});
 		    }
+			}
+
+			function signin() {
+				var name = $('input[id="user"]').val().toLowerCase();
+				var pass = $('input[id="pass"]').val();
+				if (name == '') $('#demo2').html('please enter a username');
+				else {
+					if(pass == '') $('#demo2').html('please enter a password');
+					else {
+						var userData = {
+							username: name,
+							password: pass
+						};
+						$.ajax({url: "signin", method: "POST", data: userData, success: function(result) {
+			      	if(result.info) alert(result.info);
+							if(result.msg) alert(result.msg);
+						 	if (result.token) {
+						 		verySecureGlobalToken = result.token;
+						 		$('#demo2').html('login successful');
+						 		alert('your token is ' + result.token);
+						 	}
+				  	}});
+					}
+				}
+			}
+
+			function signup() {
+				var name = $('input[id="newUser"]').val().toLowerCase();
+				var pass = $('input[id="newPass"]').val();
+				var repeat = $('input[id="repeatPass"]').val();
+				var confirmedPass = '';
+				if (name == '') $('#demo').html('please choose a username');
+				else {
+					if (pass != repeat) $('#demo').html('pass and repeated pass do not match');
+					else {
+						confirmedPass = pass;
+						if (confirmedPass == '') $('#demo').html('please choose a password');
+						else {
+							var newUserData = {
+								username: name,
+								password: confirmedPass
+							};
+							$.ajax({url: "signup", method: "POST", data: newUserData, success: function(result) {
+				      	if(result.info) alert(result.info);
+								if(result.msg) alert(result.msg);
+							 	if (result.token) {
+							 		verySecureGlobalToken = result.token;
+							 		$('#demo').html('u are now signed up and logged in');
+							 		alert('your token is ' + result.token);
+							 	}
+					  	}});
+						}
+					}
+				}
 			}
 
 			function guess() {

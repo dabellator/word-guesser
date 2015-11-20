@@ -25,14 +25,16 @@ userRouter.post('/signup',
   });
 });
 
-userRouter.get('/signin', basicHttp, function(req, res) {
-  if (!(req.auth.username && req.auth.password)) return res.status(401)
-      .json({msg: 'authKat seyz go way'});
+//FUNCTIONING ROUTE WHICH DOES NOT basicHttp or auth.
+userRouter.post('/signin',
+    bodyParser.json(), 
+    bodyParser.urlencoded({extended:true}), 
+    function(req, res) {
 
-  User.findOne({'auth.basic.username': req.auth.username}, function(err, user) {
+    User.findOne({'auth.basic.username': req.body.username}, function(err, user) {
     if (err) return res.status(401).json({msg: 'authKat seyz nope'});
     if (!user) return res.status(401).json({msg: 'kat still no'});
-    if (!user.checkPassword(req.auth.password)) return res.status(401).json({msg: 'uh unh'});
+    if (!user.checkPassword(req.body.password)) return res.status(401).json({msg: 'uh unh'});
 
     user.generateToken(function(err, token) {
       if (err) return handleErr(err, res);
@@ -40,5 +42,23 @@ userRouter.get('/signin', basicHttp, function(req, res) {
     });
   });
 });
+
+// JORDAN'S ROUTE, COULDN'T GET IT WORKING YET
+
+// userRouter.get('/signin', basicHttp, function(req, res) {
+//   // if (!(req.auth.username && req.auth.password)) return res.status(401)
+//   //     .json({msg: 'authKat seyz go way'});
+
+//   User.findOne({'auth.basic.username': req.auth.username}, function(err, user) {
+//     // if (err) return res.status(401).json({msg: 'authKat seyz nope'});
+//     // if (!user) return res.status(401).json({msg: 'kat still no'});
+//     // if (!user.checkPassword(req.auth.password)) return res.status(401).json({msg: 'uh unh'});
+
+//     user.generateToken(function(err, token) {
+//       // if (err) return handleErr(err, res);
+//       res.json({token: token});
+//     });
+//   });
+// });
 
 
