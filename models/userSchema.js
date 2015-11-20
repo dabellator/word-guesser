@@ -36,7 +36,7 @@ userSchema.methods.checkPassword = function(password) {
 userSchema.statics.updateUser = function (dataObject, cb) {
   var newTime = Math.round((dataObject.timeEnd - dataObject.timeStart)/1000);
   var newInfo = {word: dataObject.word, time: newTime, guesses: dataObject.guesses};
-  this.findOneAndUpdate({username: dataObject.username}, {$push: {stat: newInfo}}, {safe: true, upsert: true}).exec(cb);
+  this.findOneAndUpdate({username: dataObject.username}, {$push: {stat: newInfo}}, {safe: true, upsert: true}).exec();
   this.findOne({username: dataObject.username}, function (err, userObject) {
     if (err) return console.log(err);
     var newAvgTime = average(userObject.total.avg_time, userObject.total.guessed, newTime);
