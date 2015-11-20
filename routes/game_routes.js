@@ -11,7 +11,11 @@ var gameData = new GameData();
 var gameRouter = module.exports = express.Router();
 
 // launch game instance
-gameRouter.post('/new', bodyParser.urlencoded({extended:true}), eatAuth.optional, function(req, res) {
+gameRouter.post('/new', 
+    bodyParser.urlencoded({extended:true}), 
+    bodyParser.json(),
+    eatAuth.optional, 
+    function(req, res) {
 
   Word.searchDB(req.body.category, req.body.letters, function(err, word) {
     if (err) throw err;

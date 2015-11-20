@@ -10,7 +10,7 @@ var Word = require(__dirname + '/../models/wordSchema');
 
 describe('The game routes', function() {
   before(function(done) {
-    new Word({word:'hello'}).save(function() {
+    new Word({word:'hello'}).save(function(err, data) {
       done();
     });
   });
@@ -23,7 +23,7 @@ describe('The game routes', function() {
   it('should create a new game', function(done) {
     chai.request('localhost:3000')
       .post('/new')
-      .send({category:'all',letters:'any'})
+      .send({category:'all',letters:'any',token:'false'})
       .end(function(err, res) {
         expect(err).to.eql(null);
         expect(res.body.id).to.exist;
@@ -42,7 +42,7 @@ describe('The game routes', function() {
       }.bind(this));
   });
 
-  it('should respond win the game', function(done) {
+  it('should win the game', function(done) {
     chai.request('localhost:3000')
       .get('/' + this.id + '/hello')
       .end(function(err, res) {
