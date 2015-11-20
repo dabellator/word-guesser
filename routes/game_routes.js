@@ -19,7 +19,6 @@ gameRouter.post('/new',
 
   Word.searchDB(req.body.category, req.body.letters, function(err, word) {
     if (err) throw err;
-    console.log(word);
     if (word) {
       var gameID = gameData.launch(word.word, req.user.username);
       var newGameObj = {

@@ -44,7 +44,7 @@ userSchema.statics.updateUser = function (dataObject, cb) {
     var newAvgGuesses = average(userObject.total.avg_guesses, userObject.total.guessed, dataObject.guessArray.length);
     var newGuessed = userObject.total.guessed + 1;
     this.update({username: dataObject.username}, { $set: { total:{avg_time: newAvgTime, avg_guesses: newAvgGuesses, guessed: newGuessed}}}).exec(cb);
-  });
+    });
 };
 
 function average (avg_value, n, new_value) {

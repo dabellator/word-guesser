@@ -15,7 +15,7 @@ userRouter.post('/signup',
   User.findOne({username: req.body.username}, function(err, user) {
     if (err) throw err;
     if (user) return res.json({msg: 'that\'s taken'});
-
+  
     var user = new User();
     user.auth.basic.username = req.body.username;
     user.hashPassword(req.body.password);
