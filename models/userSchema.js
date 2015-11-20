@@ -44,7 +44,7 @@ userSchema.statics.updateUser = function (dataObject, cb) {
     var newAvgGuesses = average(userObject.total.avg_guesses, userObject.total.guessed, dataObject.guessArray.length);
     var newGuessed = userObject.total.guessed + 1;
     this.update({username: dataObject.username}, { $set: { total:{avg_time: newAvgTime, avg_guesses: newAvgGuesses, guessed: newGuessed}}}).exec(cb);
-  });
+    });
 };
 
 function average (avg_value, n, new_value) {
@@ -60,8 +60,3 @@ userSchema.methods.generateToken = function(cb) {
 var User = mongoose.model('User', userSchema);
 module.exports = User;
 
-User.schema.path('username').validate(function(value, callback) {
-  User.findOne({username: value}, function (err, user) {
-    if (user) callback (false);
-  });
-}, 'This user is already registered');
