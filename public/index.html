@@ -225,7 +225,7 @@
 				height: 145px;
 			}
 
-			#signUp, #signIn {
+			#signUp, #signIn, #userStatsContainer {
 				display: none;
 				padding: 4px;
 				border: 1px solid black;
@@ -238,10 +238,24 @@
 				box-shadow: 3px 3px 2px #888888;
 			}
 
-			#signUpError, #signInError {
+			#userStatsContainer {
+				width: 21.5%;
+				height: 105px;
+				bottom: 41px;
+			}
+
+			#signUpError, #signInError, #userStatsHeader {
 				text-align: center;
 				border: 1px solid black;
 				border-radius: 2px;
+			}
+
+			#userStatsHeader {
+				font-size: 1.25em;
+			}
+
+			#userStats {
+				line-height: 160%;
 			}
 
 			#signUpButton, #signInButton {
@@ -361,9 +375,14 @@
 				<br><br><button id="signUpButton" onclick="signUp()"> click to sign up </button>
 			</div>
 
+			<div id="userStatsContainer">
+				<div id="userStatsHeader"> your stats </div>
+				<div id="userStats"></div>
+			</div>
+
 			<button id="showSignUp" onclick="showSignUp()">show signup</button>
 			<button id="showSignIn" onclick="showSignIn()">show signin</button>
-			<div id="loggedIn"></div>
+			<button id="loggedIn"></button>
 
 			<div id="stats"></div>
 
@@ -373,9 +392,10 @@
 		</div>
 
 		<script>
-
-			var verySecureGlobalToken = false;
+			var userStats;
 			var mode;
+			var showingUserStats = false;
+			var verySecureGlobalToken = false;
 			var untriedLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 
 			//calling gameID(567) sets id to 567 and returns 567. subsequent calling gameID() returns 567.
@@ -432,6 +452,19 @@
 				});
 			});
 
+			$('#loggedIn').click(function() {
+				$('#userStats').html('average time: ' + userStats.avgTime); 
+				$('#userStats').append('<br>average guesses: ' + userStats.avgGuesses); 
+				$('#userStats').append('<br>games played: ' + userStats.totalGames);
+				if (!showingUserStats) {
+					$('#userStatsContainer').css('display', 'block');
+					showingUserStats = true;
+				} else {
+					$('#userStatsContainer').css('display', 'none');
+					showingUserStats = false;
+				}
+			});	
+
 			$('#hideUntried').click(function() { //hides/shows the list of yet to be guessed letters
 				if ($('#hideUntried').html() == 'hide untried letters') {
 					$('#untried').css('display', 'none');
@@ -475,10 +508,11 @@
 					else {
 						$.ajax({url: "signin", method: "GET", headers: {"Authorization": "Basic " + btoa(name + ":" + pass)}, 
 							success: function(result) { 
-							console.log(result);
+							console.log('done');
 				      	if (result.info) console.log(result.info);
 								if (result.msg) console.log(result.msg);
 							 	if (result.token) {
+							 		userStats = result.stats;
 							 		verySecureGlobalToken = result.token;
 							 		signedIn = true;
 							 		loggedIn(name);
