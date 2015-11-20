@@ -11,7 +11,7 @@ userRouter.post('/signup',
     bodyParser.json(), 
     bodyParser.urlencoded({extended:true}), 
     function(req, res) {
-  console.log(req.body.username);
+
   User.findOne({username: req.body.username}, function(err, user) {
     if (err) throw err;
     if (user) return res.json({msg: 'that\'s taken'});

@@ -4,9 +4,9 @@ var wordsSchema = new mongoose.Schema({
   word: String,
   length: Number,
   category: String,
-  guessed: Number,
-  time_avg: Number,
-  amountOfGuesses: Number
+  guessed: {type:Number,default:0},
+  time_avg: {type:Number,default:0},
+  amountOfGuesses: {type:Number,default:0}
 });
 
 wordsSchema.statics.random = function(cb) {
