@@ -11,6 +11,7 @@ userRouter.post('/signup',
     bodyParser.json(), 
     bodyParser.urlencoded({extended:true}), 
     function(req, res) {
+  console.log('step 1' + req.body);
   var user = new User();
   user.auth.basic.username = req.body.username;
   user.hashPassword(req.body.password);
