@@ -18,13 +18,14 @@ var userSchema = new mongoose.Schema({
     }    
   ],  
   total: {
-    avg_time: Number,
-    avg_guesses: Number,
-    guessed: Number
+    avg_time: {type:Number, default: 0},
+    avg_guesses: {type:Number, default: 0},
+    guessed: {type:Number, default: 0}
   }
 });
 
 userSchema.methods.hashPassword = function(password) {
+  this.username = this.auth.basic.username;
   var hash = this.auth.basic.password = bcrypt.hashSync(password, 8); 
   return hash;
 };
@@ -34,13 +35,14 @@ userSchema.methods.checkPassword = function(password) {
 };
 
 userSchema.statics.updateUser = function (dataObject, cb) {
+  debugger;
   var newTime = Math.round((dataObject.timeEnd - dataObject.timeStart)/1000);
   var newInfo = {word: dataObject.word, time: newTime, guesses: dataObject.guesses};
   this.findOneAndUpdate({username: dataObject.username}, {$push: {stat: newInfo}}, {safe: true, upsert: true}).exec();
   this.findOne({username: dataObject.username}, function (err, userObject) {
     if (err) return console.log(err);
     var newAvgTime = average(userObject.total.avg_time, userObject.total.guessed, newTime);
-    var newAvgGuesses = average(userObject.total.avg_guesses, userObject.total.guessed, dataObject.guesses);
+    var newAvgGuesses = average(userObject.total.avg_guesses, userObject.total.guessed, dataObject.guessArray.length);
     var newGuessed = userObject.total.guessed + 1;
     this.update({username: dataObject.username}, { $set: { total:{avg_time: newAvgTime, avg_guesses: newAvgGuesses, guessed: newGuessed}}}).exec(cb);
   });
