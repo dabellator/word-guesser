@@ -11,18 +11,22 @@ userRouter.post('/signup',
     bodyParser.json(), 
     bodyParser.urlencoded({extended:true}), 
     function(req, res) {
-  console.log('step 1' + req.body);
-  var user = new User();
-  console.log('step 2 ' + user);
-  user.auth.basic.username = req.body.username;
-  user.hashPassword(req.body.password);
 
-  user.save(function(err, data) {
-    if (err) return handleErr(err, res);
+  User.findOne({username: req.body.username}, function(err, user) {
+    if (err) throw err;
+    if (user) return res.json({msg: 'that\'s taken'});
 
-    user.generateToken(function(err, token) {
+    var user = new User();
+    user.auth.basic.username = req.body.username;
+    user.hashPassword(req.body.password);
+
+    user.save(function(err, data) {
       if (err) return handleErr(err, res);
-      res.json({token: token});
+
+      user.generateToken(function(err, token) {
+        if (err) return handleErr(err, res);
+        res.json({token: token});
+      });
     });
   });
 });
