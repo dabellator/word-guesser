@@ -26,9 +26,9 @@ userRouter.post('/signup',
 });
 
 userRouter.get('/signin', basicHttp, function(req, res) {
-  if (!(req.auth.username && req.auth.password)) return res.status(401)
-      .json({msg: 'authKat seyz go way'});
-
+  if (!(req.auth.username && req.auth.password)) {
+    return res.status(401).json({msg: 'authKat seyz go way'});
+  }
   User.findOne({'auth.basic.username': req.auth.username}, function(err, user) {
     if (err) return res.status(401).json({msg: 'authKat seyz nope'});
     if (!user) return res.status(401).json({msg: 'kat still no'});
@@ -40,5 +40,4 @@ userRouter.get('/signin', basicHttp, function(req, res) {
     });
   });
 });
-
 
