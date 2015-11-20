@@ -1,6 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
-var chaihttp = require('chai-http')
+var chaihttp = require('chai-http');
 chai.use(chaihttp);
 
 process.env.MONGOLAB_URI = 'mongodb://localhost/word_game_test';
