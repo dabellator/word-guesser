@@ -473,7 +473,7 @@
 				else {
 					if(pass == '') $('#signInError').html('please enter a password');
 					else {
-						$.ajax({url: "signIn", method: "GET", headers: {"Authorization": "Basic " + btoa(name + ":" + pass)}, 
+						$.ajax({url: "signin", method: "GET", headers: {"Authorization": "Basic " + btoa(name + ":" + pass)}, 
 							success: function(result) { 
 							console.log(result);
 				      	if (result.info) console.log(result.info);
@@ -505,7 +505,7 @@
 								username: name,
 								password: confirmedPass
 							};
-							$.ajax({url: "signUp", method: "POST", data: newUserData, success: function(result) {
+							$.ajax({url: "signup", method: "POST", data: newUserData, success: function(result) {
 				      	if(result.info) console.log(result.info);
 								if(result.msg) console.log(result.msg);
 							 	if (result.token) {
