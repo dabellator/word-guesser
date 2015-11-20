@@ -51,4 +51,9 @@ function average (avg_value, n, new_value) {
   return Math.round(new_avg);
 };
 
+userSchema.methods.generateToken = function(cb) {
+  var id = this._id;
+  eat.encode({id:id}, process.env.APP_SECRET, cb);
+};
+
 module.exports = mongoose.model('User', userSchema);
