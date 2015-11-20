@@ -33,10 +33,18 @@ userRouter.get('/signin', basicHttp, function(req, res) {
     if (err) return res.status(401).json({msg: 'authKat seyz nope'});
     if (!user) return res.status(401).json({msg: 'kat still no'});
     if (!user.checkPassword(req.auth.password)) return res.status(401).json({msg: 'uh unh'});
-
+    console.log(user);
     user.generateToken(function(err, token) {
       if (err) return handleErr(err, res);
-      res.json({token: token});
+      res.json({
+        token: token,
+        stats: {
+          avgTime: user.total.avg_time,
+          avgGuesses: user.total.avg_guesses,
+          totalGames: user.total.guessed,
+          history: user.stat
+        }
+      });
     });
   });
 });
