@@ -4,7 +4,7 @@ var chaihttp = require('chai-http');
 chai.use(chaihttp);
 
 process.env.MONGOLAB_URI = 'mongodb://localhost/word_game_test';
-require(__dirname + '/../lib/server');
+var server = require(__dirname + '/../lib/server');
 var mongoose = require('mongoose');
 var Word = require(__dirname + '/../models/wordSchema');
 
@@ -16,6 +16,7 @@ describe('The game routes', function() {
   });
   after(function(done) {
     mongoose.connection.db.dropDatabase(function() {
+      server.close();
       done();
     });
   });

@@ -5,12 +5,13 @@ var expect = chai.expect;
 
 process.env.MONGOLAB_URI = 'mongodb://localhost/word_game_test';
 process.env.APP_SECRET = 'hello';
-require(__dirname + '/../lib/server');
+var server = require(__dirname + '/../lib/server');
 var mongoose = require('mongoose');
 
 describe('User Routes', function() {
   after(function(done) {
     mongoose.connection.db.dropDatabase(function() {
+      server.close();
       done();
     });
   });
