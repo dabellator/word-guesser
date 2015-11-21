@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 
+//creating user's Schema
 var wordsSchema = new mongoose.Schema({
   word: String,
   length: Number,
@@ -9,16 +10,7 @@ var wordsSchema = new mongoose.Schema({
   amountOfGuesses: {type:Number,default:0}
 });
 
-wordsSchema.statics.random = function(cb) {
-  this.count(function(err, data) {
-    var random = Math.floor(Math.random() * data);
-    return this.findOne().limit(-1).skip(random).exec(cb);
-  });
-};
-
-wordsSchema.methods.setStat = function(guessCount) {
-  
-};
+//function for updating general word's statistics after the game is over
 wordsSchema.statics.setStat = function (dataObject, cb) {
   this.findOne({word: dataObject.currentWord}, function (err, wordObject) {
     if (err) return console.log(err);
@@ -30,6 +22,7 @@ wordsSchema.statics.setStat = function (dataObject, cb) {
   });
 };
 
+//Searching for random word based on some user's criteria (category and number of letters)
 wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
   var query;
   if ((numberOfLetters === 'any') && (chosenCategory !== 'all')) {
@@ -41,6 +34,7 @@ wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
   } else { 
     query = {};
   }
+  // choosing the random word
     this.find(query, function (err, wordObj) {
       this.count(function (err, data) {
         var random = Math.floor(Math.random() * data);
@@ -48,7 +42,7 @@ wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
     });
   });
 };
-
+// function for calculations of average time and average guesses (setStat method uses)
 function average (avg_value, n, new_value) {
   var new_avg = (avg_value*n + new_value)/(n+1);  
   return Math.round(new_avg);

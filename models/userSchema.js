@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var eat = require('eat');
 
+//creating user's schema
 var userSchema = new mongoose.Schema({
   username: String,
   auth: {
@@ -24,16 +25,22 @@ var userSchema = new mongoose.Schema({
   }
 });
 
+//the next 3 methods are used for user's authentication 
 userSchema.methods.hashPassword = function(password) {
   this.username = this.auth.basic.username;
   var hash = this.auth.basic.password = bcrypt.hashSync(password, 8); 
   return hash;
 };
-
 userSchema.methods.checkPassword = function(password) {
   return bcrypt.compareSync(password, this.auth.basic.password);
 };
+userSchema.methods.generateToken = function(cb) {
+  var id = this._id;
+  eat.encode({id:id}, process.env.APP_SECRET, cb);
+};
 
+// updating user's statistic information for every word (average time, average guesses)
+// And updating general statistics for particular user
 userSchema.statics.updateUser = function (dataObject, cb) {
   var newTime = Math.round((dataObject.timeEnd - dataObject.timeStart)/1000);
   var newInfo = {word: dataObject.currentWord, time: newTime, guesses: dataObject.guessArray.length};
@@ -47,14 +54,10 @@ userSchema.statics.updateUser = function (dataObject, cb) {
     });
 };
 
+//function for calculations of average time and average guesses (setStat method uses)
 function average (avg_value, n, new_value) {
   var new_avg = (avg_value*n + new_value)/(n+1);  
   return Math.round(new_avg);
-};
-
-userSchema.methods.generateToken = function(cb) {
-  var id = this._id;
-  eat.encode({id:id}, process.env.APP_SECRET, cb);
 };
 
 var User = mongoose.model('User', userSchema);

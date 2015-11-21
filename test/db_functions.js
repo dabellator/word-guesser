@@ -1,30 +1,41 @@
-var chai = require ('chai');
+var chai = require('chai');
+var chaihttp = require('chai-http');
+chai.use(chaihttp);
 var expect = chai.expect;
 var mongoose = require ('mongoose');
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/word_game');
 var Word = require(__dirname + '/../models/wordSchema.js');
 
 describe('DB performs its main functions', function() {
 
-  it('should be able to create a word', function() {
-    var word_data = new Word({word: 'hello'})
+  after(function(done) {
+    mongoose.connection.db.dropDatabase(function() {   
+      done();
+    });    
+  });
+ 
+  it('should be able to create a word', function(done) {
+    var word_data = new Word({word: 'hello'});
     word_data.save();
     Word.findOne({'word': 'hello'}, function (err, word) {
       expect(word).to.have.property('_id');
-    });   
+      done();  
+    });  
   });
-
-  it('should be able to update document\'s information', function() {
+  
+  it('should be able to update document\'s information', function(done) {
     var word_data = new Word({word: 'hello', guessed: 0, time_avg: 0, amountOfGuesses: 0, guessed: 0})
     word_data.save();
-    var dataObject = {currentWord: 'hello', timeStart: 3000, timeEnd: 15000, guesses: 3}
+    var dataObject = {currentWord: 'hello', timeStart: 3000, timeEnd: 15000, guessArray: [1,1,1]}
     Word.setStat(dataObject, function (err, word) {
-      expect(word.guesses).to.eql(3);
-      expect(word.time_avg).to.eql(12);
-      expect(word.guessed).to.eql(1);
+      expect(word.avgTime).to.eql(12);
+      expect(word.avgGuesses).to.eql(3);
+      expect(word.yourTime).to.eql(12);
+      done();
     });   
   });
 
-  it('should be able to search documents based on different user\'s criteria and return random document', function() {
+  it('should be able to search documents based on different user\'s criteria and return random document', function(done) {
     var wordsAnimals = ['dog', 'cat', 'parrot'];
     var wordsCities = ['seattle, boston', 'elf'];
     for (var i = 0; i< wordsAnimals; i++) {
@@ -48,5 +59,6 @@ describe('DB performs its main functions', function() {
     Word.searchDB ('cities', 'any',  function (err, obj) {
       expect(obj.category).to.eql('cities');
     });
-  });
+    done();
+ });
 });
