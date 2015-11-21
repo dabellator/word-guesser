@@ -39,7 +39,6 @@ userRouter.get('/signin', basicHttp, function(req, res) {
     if (err) return res.status(401).json({msg: 'authKat seyz nope'});
     if (!user) return res.status(401).json({msg: 'kat still no'});
     if (!user.checkPassword(req.auth.password)) return res.status(401).json({msg: 'uh unh'});
-    console.log(user);
     user.generateToken(function(err, token) {
       if (err) return handleErr(err, res);
       res.json({

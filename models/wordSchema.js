@@ -34,6 +34,7 @@ wordsSchema.statics.searchDB = function (chosenCategory, numberOfLetters, cb) {
   } else { 
     query = {};
   }
+
   // choosing the random word
     this.find(query, function (err, wordObj) {
       this.count(function (err, data) {

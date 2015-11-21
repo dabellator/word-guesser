@@ -46,11 +46,10 @@ describe('The game routes', function() {
     chai.request('localhost:3000')
       .get('/' + this.id + '/hello')
       .end(function(err, res) {
-        console.log(res.body);
         expect(err).to.eql(null);
         expect(res.body.gameOver).to.eql(true);
         done();
       }.bind(this));
-  })
+  });
 });
 

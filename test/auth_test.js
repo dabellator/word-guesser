@@ -36,5 +36,5 @@ describe('The Auth routes', function() {
         done();
       });
   });
-
 });
+

@@ -1,5 +1,5 @@
 var fs = require('fs');
-var Word = require(__dirname + '/models/wordSchema.js')
+var Word = require(__dirname + '/models/wordSchema.js');
 module.exports = require(__dirname + '/lib/server.js');
 
 Word.count({}, function(err, count) {
@@ -27,10 +27,10 @@ function startBuild() {
     files.forEach(function(file) {
       fs.readFile('public/data_files/' + file, 'utf8', function(err, list) {
         var category = file.split('.')[0];
-        var allWords = list.split(/\r\n|\r|\n/g)
+        var allWords = list.split(/\r\n|\r|\n/g);
         buildDB(allWords, category);
       });
-    })
+    });
   });
 }
 
